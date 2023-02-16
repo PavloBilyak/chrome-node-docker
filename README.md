@@ -10,6 +10,28 @@ This image is based on Ubuntu Jammy (22.04) and includes:
 
 Additionally, it uses *non-root user* by default!
 
+## Build locally
+
+Build image locally:
+
+```sh
+docker build -t chrome-node:latest .
+```
+
+or use `build.sh` script.
+
+On build you can specify `NODE_VERSION` env to install different from default `lts` version of Node.js (ex. `16`)
+
+### `build.sh`
+
+Script will use `chrome-node` as default image name, unless you provide `IMAGE_NAME` env to overwrite it.
+Also it will generate 4 version tags for current build:
+
+* `MAJOR.MINOR.BUILD.PATCH` (i.e. `110.0.5481.100`)
+* `MAJOR.MINOR.BUILD` (i.e. `110.0.5481`)
+* `MAJOR.MINOR` (i.e. `110.0`)
+* `MAJOR` (i.e. `110`)
+
 ## Links:
 
 * [Google Chrome](https://www.google.com/chrome/)

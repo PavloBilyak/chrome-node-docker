@@ -37,6 +37,6 @@ RUN volta install node@$NODE_VERSION
 
 # install latest npm, yarn & pnpm with corepack
 RUN npm i -g npm@latest corepack@latest \
- && corepack prepare --all
+ && corepack prepare --all --activate
 
 CMD ["google-chrome", "--version"]

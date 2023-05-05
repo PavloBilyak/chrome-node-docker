@@ -1,0 +1,45 @@
+name: Build and push to Docker Hub
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 3'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build image
+        uses: docker/build-push-action@v4
+        with:
+          tags: ${{ vars.DOCKERHUB_REPO }}:latest
+
+      - name: Generate tags and push
+        env:
+          DOCKERHUB_REPO: ${{ vars.DOCKERHUB_REPO }}
+        run: |
+          # MAJOR.MINOR.BUILD.PATCH
+          CHROME_VERSION="$(docker run --rm "$DOCKERHUB_REPO:latest" | grep -oP "^Google Chrome \K([\d.]+)")"
+          docker tag "$DOCKERHUB_REPO:latest" "$DOCKERHUB_REPO:$CHROME_VERSION"
+
+          # MAJOR.MINOR.BUILD
+          CHROME_VERSION_BUILD="$(echo "$CHROME_VERSION" | grep -oP "^\K(\d+)(\.\d+){2}")"
+          docker tag "$DOCKERHUB_REPO:latest" "$DOCKERHUB_REPO:$CHROME_VERSION_BUILD"
+
+          # MAJOR.MINOR
+          CHROME_VERSION_MINOR="$(echo "$CHROME_VERSION" | grep -oP "^\K(\d+)(\.\d+)")"
+          docker tag "$DOCKERHUB_REPO:latest" "$DOCKERHUB_REPO:$CHROME_VERSION_MINOR"
+
+          # MAJOR
+          CHROME_VERSION_MAJOR="$(echo "$CHROME_VERSION" | grep -oP "^\K(\d+)")"
+          docker tag "$DOCKERHUB_REPO:latest" "$DOCKERHUB_REPO:$CHROME_VERSION_MAJOR"
+
+          docker push -a $DOCKERHUB_REPO

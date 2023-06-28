@@ -8,7 +8,7 @@ RUN apt-get update -qq \
  && curl -o /tmp/google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb \
  && dpkg -i /tmp/google-chrome.deb || true \
  && apt-get install -f -y --no-install-recommends \
- && rm /tmp/google-chrome.deb /etc/apt/sources.list.d/google-chrome.list /etc/apt/trusted.gpg.d/google-chrome.gpg \
+ && rm -f /tmp/google-chrome.deb /etc/apt/sources.list.d/google-chrome.list /etc/apt/trusted.gpg.d/google-chrome.gpg \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
